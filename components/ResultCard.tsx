@@ -17,11 +17,11 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
     if (cardRef.current === null) {
       return;
     }
-    
+
     // Create a wrapper to ensure dark mode background is captured
     const element = cardRef.current;
-    
-    htmlToImage.toPng(element, { 
+
+    htmlToImage.toPng(element, {
       pixelRatio: 2, // High quality
       backgroundColor: '#F8F9FA',
       style: {
@@ -361,9 +361,9 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
                 <div key={idx} className="bg-background/80 p-5 rounded-2xl shadow-sm border border-purple-500/10 hover:shadow-md transition-shadow">
                   <div className="flex items-center gap-2 mb-3">
                     <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 flex items-center justify-center font-black text-xs">
-                      D{idx+1}
+                      D{idx + 1}
                     </div>
-                    <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">Ide Hari {idx+1}</span>
+                    <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">Ide Hari {idx + 1}</span>
                   </div>
                   <p className="text-xs leading-relaxed text-justify opacity-90">
                     {content.replace(/\*\*/g, '').replace(/\*/g, '').replace(/^Hari \d+:?/i, '').trim()}
