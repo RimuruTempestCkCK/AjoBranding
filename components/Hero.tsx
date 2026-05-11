@@ -8,7 +8,7 @@ export function Hero() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center">
-        
+
         {/* Centered Top Badge */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -24,7 +24,7 @@ export function Hero() {
 
         {/* Middle row: Text on Left, Image on Right */}
         <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-8 mb-12">
-          
+
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -43,11 +43,11 @@ export function Hero() {
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
             className="flex-1 flex justify-center lg:justify-end"
           >
-            {/* Blended Image without hard borders */}
-            <img 
-              src="/ajo-hero.jpeg" 
-              alt="AjoBranding Mentor" 
-              className="w-64 h-auto md:w-80 lg:w-[400px] object-contain [mask-image:radial-gradient(circle_at_center,black_40%,transparent_70%)] mix-blend-luminosity hover:mix-blend-normal transition-all duration-700 hover:scale-105"
+            {/* Transparent Image */}
+            <img
+              src="/ajo-hero.png"
+              alt="AjoBranding Mentor"
+              className="w-64 h-auto md:w-80 lg:w-[400px] object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
             />
           </motion.div>
 
