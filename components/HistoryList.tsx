@@ -48,11 +48,11 @@ export function HistoryList({ history, onSelect, onClear }: HistoryListProps) {
               </h4>
               <ChevronRight className="w-6 h-6 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
             </div>
-            
+
             <p className="text-sm text-muted-foreground mb-6 line-clamp-3 italic flex-grow">
               "{item.tagline}"
             </p>
-            
+
             <div className="flex items-center justify-between mt-auto pt-4 border-t border-border">
               <div className="flex gap-2">
                 {item.palette.slice(0, 5).map((color, idx) => (

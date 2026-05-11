@@ -55,7 +55,7 @@ export function UploadBox({ onImageSelect, isLoading, onError }: UploadBoxProps)
       if (onError) onError("Ukuran gambar terlalu besar. Maksimal 4MB.");
       return;
     }
-    
+
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
     onImageSelect(file, brandName.trim() !== "" ? brandName.trim() : undefined);
@@ -135,7 +135,7 @@ export function UploadBox({ onImageSelect, isLoading, onError }: UploadBoxProps)
               <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center">
                 <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
                 <p className="text-primary font-medium animate-pulse tracking-wide">
-                  Menganalisis DNA Merek...
+                  Tunggu sebentar yaa, lagi diproses ⏳😊
                 </p>
               </div>
             )}
