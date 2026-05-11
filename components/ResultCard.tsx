@@ -20,12 +20,25 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
 
     // Create a wrapper to ensure dark mode background is captured
     const element = cardRef.current;
+    
+    // Trik untuk memaksa ukuran gambar minimal 1200px (ukuran standar/Desktop)
+    // Walaupun diunduh dari HP, gambarnya tidak akan kecil atau pecah.
+    const targetWidth = 1200;
+    const currentWidth = element.offsetWidth;
+    const scale = currentWidth < targetWidth ? targetWidth / currentWidth : 1;
+    const targetHeight = element.offsetHeight * scale;
 
     htmlToImage.toPng(element, {
-      pixelRatio: 2, // High quality
+      pixelRatio: 2, // Kualitas tinggi
       backgroundColor: '#F8F9FA',
+      width: targetWidth,
+      height: targetHeight,
       style: {
-        padding: '2rem',
+        transform: `scale(${scale})`,
+        transformOrigin: 'top left',
+        width: `${currentWidth}px`,
+        height: `${element.offsetHeight}px`,
+        padding: currentWidth < 768 ? '1rem' : '2rem',
         borderRadius: '2rem'
       }
     })
