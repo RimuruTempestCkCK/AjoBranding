@@ -29,14 +29,36 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
         borderRadius: '2rem'
       }
     })
-      .then((dataUrl) => {
+      .then(async (dataUrl) => {
+        const filename = `${result.identity.replace(/\s+/g, '-').toLowerCase()}-merek.png`;
+        
+        try {
+          // 📱 iOS & Mobile Fallback: Native Web Share API
+          if (navigator.share) {
+            const blob = await (await fetch(dataUrl)).blob();
+            const file = new File([blob], filename, { type: 'image/png' });
+            
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({
+                files: [file],
+                title: 'Hasil AjoBranding',
+              });
+              return; // Stop here if share sheet opened successfully
+            }
+          }
+        } catch (e) {
+          console.log("Share API batal/gagal, lanjut ke fallback unduh", e);
+        }
+
+        // 💻 Desktop Fallback
         const link = document.createElement('a');
-        link.download = `${result.identity.replace(/\s+/g, '-').toLowerCase()}-merek.png`;
+        link.download = filename;
         link.href = dataUrl;
         link.click();
       })
       .catch((err) => {
         console.error('Oops, ada yang salah!', err);
+        alert('Maaf, fitur unduh gagal di perangkat ini. Anda bisa langsung melakukan Screenshot layar Anda.');
       });
   }, [cardRef, result.identity]);
   const containerVariants = {
