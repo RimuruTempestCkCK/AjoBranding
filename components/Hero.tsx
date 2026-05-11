@@ -3,7 +3,7 @@ import { Sparkles } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative w-full py-20 flex flex-col items-center justify-center px-4 md:px-8 overflow-hidden">
+    <section className="relative w-full pt-20 pb-4 flex flex-col items-center justify-center px-4 md:px-8 overflow-hidden">
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
@@ -23,7 +23,7 @@ export function Hero() {
         </motion.div>
 
         {/* Middle row: Text on Left, Image on Right */}
-        <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 mb-12">
+        <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
 
           {/* Left Column: Text */}
           <motion.div

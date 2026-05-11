@@ -84,7 +84,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col items-center pb-24 selection:bg-white/20">
       <Hero />
 
-      <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 mt-8 flex flex-col items-center gap-16">
+      <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 mt-0 flex flex-col items-center gap-16">
         <AnimatePresence mode="wait">
           {!result && (
             <motion.div
