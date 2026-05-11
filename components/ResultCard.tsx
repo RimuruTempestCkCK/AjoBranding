@@ -14,53 +14,82 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleDownload = useCallback(() => {
-    if (cardRef.current === null) {
-      return;
-    }
+    if (cardRef.current === null) return;
 
-    // Create a wrapper to ensure dark mode background is captured
-    const element = cardRef.current;
+    const originalElement = cardRef.current;
 
-    htmlToImage.toPng(element, {
-      pixelRatio: 1.5, // Diturunkan sedikit agar ukuran file (MB) lebih kecil tapi tetap tajam
+    // 🚀 TRIK PAMUNGKAS: Buat kloningan elemen secara rahasia di layar (hidden)
+    // agar kita bisa memaksa lebarnya 1200px (Desktop) dan mengukur tinggi pastinya.
+    const printContainer = document.createElement('div');
+    printContainer.style.position = 'absolute';
+    printContainer.style.left = '-9999px';
+    printContainer.style.top = '-9999px';
+    printContainer.style.width = '1200px';
+
+    const clone = originalElement.cloneNode(true) as HTMLElement;
+    
+    // Modifikasi class pada kloningan untuk memaksa susunan Desktop
+    const elements = clone.querySelectorAll('*');
+    elements.forEach((el) => {
+      const htmlEl = el as HTMLElement;
+      
+      // Paksa Flex Row
+      if (htmlEl.classList.contains('md:flex-row')) {
+        htmlEl.classList.remove('flex-col');
+        htmlEl.style.display = 'flex';
+        htmlEl.style.flexDirection = 'row';
+      }
+      
+      // Paksa Width Auto
+      if (htmlEl.classList.contains('md:w-auto')) {
+        htmlEl.classList.remove('w-full');
+        htmlEl.style.width = 'auto';
+      }
+      
+      // Paksa Grid Desktop
+      if (htmlEl.classList.contains('lg:grid-cols-4')) {
+        htmlEl.classList.remove('grid-cols-1', 'sm:grid-cols-2');
+        htmlEl.style.display = 'grid';
+        htmlEl.style.gridTemplateColumns = 'repeat(4, minmax(0, 1fr))';
+      } else if (htmlEl.classList.contains('lg:grid-cols-2') || htmlEl.classList.contains('xl:grid-cols-2') || htmlEl.classList.contains('md:grid-cols-2')) {
+        htmlEl.classList.remove('grid-cols-1', 'sm:grid-cols-2');
+        htmlEl.style.display = 'grid';
+        htmlEl.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
+      }
+      
+      // Paksa Text Size
+      if (htmlEl.classList.contains('lg:text-7xl')) {
+        htmlEl.style.fontSize = '4.5rem';
+        htmlEl.style.lineHeight = '1';
+      }
+    });
+
+    clone.style.padding = '3rem';
+    clone.style.backgroundColor = '#F8F9FA'; // Pastikan background putih/terang
+    clone.style.borderRadius = '2rem';
+    clone.style.margin = '0';
+    clone.style.boxShadow = 'none';
+
+    printContainer.appendChild(clone);
+    document.body.appendChild(printContainer);
+
+    // Sekarang elemen sudah di dalam DOM dan bisa diukur tingginya secara presisi!
+    const targetWidth = 1200;
+    const targetHeight = clone.offsetHeight;
+
+    htmlToImage.toPng(clone, {
+      pixelRatio: 2, // Kualitas HD agar tidak blur di Desktop
       backgroundColor: '#F8F9FA',
+      width: targetWidth,
+      height: targetHeight,
       style: {
         margin: '0',
-      },
-      onclone: (document, clonedElement) => {
-        // Trik jitu: Paksa lebar 1200px (Desktop) pada elemen hasil kloningan.
-        // Walaupun diunduh dari HP yang sempit, gambar hasilnya tetap lebar & rapi.
-        clonedElement.style.width = '1200px';
-        clonedElement.style.padding = '3rem';
-        clonedElement.style.borderRadius = '2rem';
-        
-        // Ubah semua layout mobile (1 kolom) menjadi desktop (banyak kolom)
-        const elements = clonedElement.querySelectorAll('*');
-        elements.forEach((el) => {
-          const htmlEl = el as HTMLElement;
-          if (htmlEl.classList.contains('md:flex-row')) {
-            htmlEl.classList.remove('flex-col');
-            htmlEl.style.flexDirection = 'row';
-          }
-          if (htmlEl.classList.contains('md:w-auto')) {
-            htmlEl.style.width = 'auto';
-          }
-          if (htmlEl.classList.contains('lg:grid-cols-2') || htmlEl.classList.contains('xl:grid-cols-2') || htmlEl.classList.contains('md:grid-cols-2')) {
-            htmlEl.classList.remove('grid-cols-1');
-            htmlEl.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
-          }
-          if (htmlEl.classList.contains('lg:grid-cols-4')) {
-            htmlEl.classList.remove('grid-cols-1', 'sm:grid-cols-2');
-            htmlEl.style.gridTemplateColumns = 'repeat(4, minmax(0, 1fr))';
-          }
-          if (htmlEl.classList.contains('lg:text-7xl')) {
-            htmlEl.style.fontSize = '4.5rem';
-            htmlEl.style.lineHeight = '1';
-          }
-        });
       }
     })
       .then(async (dataUrl) => {
+        // Bersihkan elemen rahasia
+        document.body.removeChild(printContainer);
+
         const filename = `${result.identity.replace(/\s+/g, '-').toLowerCase()}-merek.png`;
         
         try {
@@ -88,6 +117,9 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
         link.click();
       })
       .catch((err) => {
+        if (document.body.contains(printContainer)) {
+          document.body.removeChild(printContainer);
+        }
         console.error('Oops, ada yang salah!', err);
         alert('Maaf, fitur unduh gagal di perangkat ini. Anda bisa langsung melakukan Screenshot layar Anda.');
       });
