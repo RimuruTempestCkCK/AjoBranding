@@ -23,20 +23,26 @@ export function Hero() {
         </motion.div>
 
         {/* Middle row: Text on Left, Image on Right */}
-        <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-8 mb-12">
+        <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 mb-12">
 
+          {/* Left Column: Text */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
-            className="flex-1 flex justify-center lg:justify-start"
+            className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left"
           >
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-center lg:text-left text-foreground leading-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-foreground leading-tight mb-6">
               Sini Ajo Bantuin Biar{" "}
               <span className="text-gradient-gold block mt-2">Branding Kamu Makin Kece!</span>
             </h1>
+            
+            <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed opacity-90 max-w-xl">
+              Nggak usah pusing mikirin ide jualan. Cukup masukin foto produk atau fotomu sendiri, biar Ajo yang racik ide konten, nama merek, sampai strategi jualan yang gampang banget buat ditiru!
+            </p>
           </motion.div>
 
+          {/* Right Column: Image */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -52,18 +58,6 @@ export function Hero() {
           </motion.div>
 
         </div>
-
-        {/* Bottom Text */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          className="w-full"
-        >
-          <p className="text-lg md:text-xl text-muted-foreground font-medium leading-relaxed opacity-90 text-center lg:text-left max-w-4xl">
-            Nggak usah pusing mikirin ide jualan. Cukup masukin foto produk atau fotomu sendiri, biar Ajo yang racik ide konten, nama merek, sampai strategi jualan yang gampang banget buat ditiru!
-          </p>
-        </motion.div>
 
       </div>
     </section>
