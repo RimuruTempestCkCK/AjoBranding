@@ -20,26 +20,44 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
 
     // Create a wrapper to ensure dark mode background is captured
     const element = cardRef.current;
-    
-    // Trik untuk memaksa ukuran gambar minimal 1200px (ukuran standar/Desktop)
-    // Walaupun diunduh dari HP, gambarnya tidak akan kecil atau pecah.
-    const targetWidth = 1200;
-    const currentWidth = element.offsetWidth;
-    const scale = currentWidth < targetWidth ? targetWidth / currentWidth : 1;
-    const targetHeight = element.offsetHeight * scale;
 
     htmlToImage.toPng(element, {
-      pixelRatio: 2, // Kualitas tinggi
+      pixelRatio: 1.5, // Diturunkan sedikit agar ukuran file (MB) lebih kecil tapi tetap tajam
       backgroundColor: '#F8F9FA',
-      width: targetWidth,
-      height: targetHeight,
       style: {
-        transform: `scale(${scale})`,
-        transformOrigin: 'top left',
-        width: `${currentWidth}px`,
-        height: `${element.offsetHeight}px`,
-        padding: currentWidth < 768 ? '1rem' : '2rem',
-        borderRadius: '2rem'
+        margin: '0',
+      },
+      onclone: (document, clonedElement) => {
+        // Trik jitu: Paksa lebar 1200px (Desktop) pada elemen hasil kloningan.
+        // Walaupun diunduh dari HP yang sempit, gambar hasilnya tetap lebar & rapi.
+        clonedElement.style.width = '1200px';
+        clonedElement.style.padding = '3rem';
+        clonedElement.style.borderRadius = '2rem';
+        
+        // Ubah semua layout mobile (1 kolom) menjadi desktop (banyak kolom)
+        const elements = clonedElement.querySelectorAll('*');
+        elements.forEach((el) => {
+          const htmlEl = el as HTMLElement;
+          if (htmlEl.classList.contains('md:flex-row')) {
+            htmlEl.classList.remove('flex-col');
+            htmlEl.style.flexDirection = 'row';
+          }
+          if (htmlEl.classList.contains('md:w-auto')) {
+            htmlEl.style.width = 'auto';
+          }
+          if (htmlEl.classList.contains('lg:grid-cols-2') || htmlEl.classList.contains('xl:grid-cols-2') || htmlEl.classList.contains('md:grid-cols-2')) {
+            htmlEl.classList.remove('grid-cols-1');
+            htmlEl.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
+          }
+          if (htmlEl.classList.contains('lg:grid-cols-4')) {
+            htmlEl.classList.remove('grid-cols-1', 'sm:grid-cols-2');
+            htmlEl.style.gridTemplateColumns = 'repeat(4, minmax(0, 1fr))';
+          }
+          if (htmlEl.classList.contains('lg:text-7xl')) {
+            htmlEl.style.fontSize = '4.5rem';
+            htmlEl.style.lineHeight = '1';
+          }
+        });
       }
     })
       .then(async (dataUrl) => {
