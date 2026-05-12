@@ -25,9 +25,11 @@ Dokumen ini berisi daftar fitur, konfigurasi, dan tugas-tugas yang telah diseles
 - [x] Memperbaiki *Error kosong `{}`* dari `html-to-image` dengan menghapus properti `cacheBust` yang merusak URL Blob.
 
 ### 5. Peningkatan Fungsionalitas & Pengalaman Pengguna (UX)
-- [x] Menambahkan fitur **Download/Export** hasil *brand identity* (misal ke bentuk PDF, atau tangkapan layar PNG).
+- [x] Menambahkan fitur **Download/Export** hasil *brand identity* (Format PNG, PDF, dan PowerPoint/PPTX).
 - [x] Menyediakan **Riwayat (History)** hasil *generate* yang sebelumnya dibuat (disimpan di *Local Storage*).
 - [x] Validasi *upload* gambar di sisi *client* (membatasi ukuran file maksimal 4MB, memastikan ekstensi valid seperti JPG/PNG/WEBP) sebelum dikirim ke API.
+- [x] Implementasi **Input Suara (Voice Input)** pada kolom nama merek menggunakan Web Speech API untuk kemudahan akses.
+- [x] Fitur **"Tanya Ajo" (Follow-up Chat)** yang memungkinkan pengguna berinteraksi langsung dengan AI untuk konsultasi lebih lanjut mengenai brand mereka.
 
 ### 6. Optimasi Kinerja & SEO
 - [x] Implementasi **SEO Best Practices** secara otomatis (Title tags, Meta descriptions, Open Graph khusus untuk platform sosial).
@@ -35,6 +37,7 @@ Dokumen ini berisi daftar fitur, konfigurasi, dan tugas-tugas yang telah diseles
 
 ### 7. Pengujian (Testing & Quality Assurance)
 - [x] Pengujian (*Testing*) lintas perangkat dan browser (Memastikan UI *perfect* di Mobile, Tablet, dan Desktop tanpa ada layout yang pecah).
+- [x] **Optimasi Mobile Pixel-Perfect**: Penyesuaian tipografi dan layout khusus layar kecil agar dashboard tetap estetik dan mudah dibaca.
 - [x] Penanganan status *Error* (*Error Handling*) yang lebih *user-friendly* apabila kuota API habis, gambar tidak jelas, atau koneksi terputus.
 
 ### 8. Deployment (Rilis Produksi)

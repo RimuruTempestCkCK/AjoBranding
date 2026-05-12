@@ -1,8 +1,10 @@
 import { BrandIdentityResult } from "@/types/brand";
 import { motion } from "framer-motion";
-import { Palette, Quote, Zap, Share2, Film, RefreshCcw, Download } from "lucide-react";
+import { Palette, Quote, Zap, Share2, Film, RefreshCcw, Download, Users, Target, Heart, Sparkles, FileText, Presentation } from "lucide-react";
 import { useRef, useCallback } from "react";
 import * as htmlToImage from "html-to-image";
+import jsPDF from "jspdf";
+import pptxgen from "pptxgenjs";
 
 interface ResultCardProps {
   result: BrandIdentityResult;
@@ -19,33 +21,34 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
     const originalElement = cardRef.current;
 
     // 🚀 TRIK PAMUNGKAS: Buat kloningan elemen secara rahasia di layar (hidden)
-    // agar kita bisa memaksa lebarnya 1200px (Desktop) dan mengukur tinggi pastinya.
+    // Gunakan 1024px (Standar Desktop/Tablet) agar teks tidak kekecilan 
+    // dan mencegah iOS Safari melakukan kompresi paksa (blur) karena batas memori kanvas.
     const printContainer = document.createElement('div');
     printContainer.style.position = 'absolute';
     printContainer.style.left = '-9999px';
     printContainer.style.top = '-9999px';
-    printContainer.style.width = '1200px';
+    printContainer.style.width = '1024px';
 
     const clone = originalElement.cloneNode(true) as HTMLElement;
-    
+
     // Modifikasi class pada kloningan untuk memaksa susunan Desktop
     const elements = clone.querySelectorAll('*');
     elements.forEach((el) => {
       const htmlEl = el as HTMLElement;
-      
+
       // Paksa Flex Row
       if (htmlEl.classList.contains('md:flex-row')) {
         htmlEl.classList.remove('flex-col');
         htmlEl.style.display = 'flex';
         htmlEl.style.flexDirection = 'row';
       }
-      
+
       // Paksa Width Auto
       if (htmlEl.classList.contains('md:w-auto')) {
         htmlEl.classList.remove('w-full');
         htmlEl.style.width = 'auto';
       }
-      
+
       // Paksa Grid Desktop
       if (htmlEl.classList.contains('lg:grid-cols-4')) {
         htmlEl.classList.remove('grid-cols-1', 'sm:grid-cols-2');
@@ -56,7 +59,7 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
         htmlEl.style.display = 'grid';
         htmlEl.style.gridTemplateColumns = 'repeat(2, minmax(0, 1fr))';
       }
-      
+
       // Paksa Text Size
       if (htmlEl.classList.contains('lg:text-7xl')) {
         htmlEl.style.fontSize = '4.5rem';
@@ -74,11 +77,11 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
     document.body.appendChild(printContainer);
 
     // Sekarang elemen sudah di dalam DOM dan bisa diukur tingginya secara presisi!
-    const targetWidth = 1200;
+    const targetWidth = 1024;
     const targetHeight = clone.offsetHeight;
 
     htmlToImage.toPng(clone, {
-      pixelRatio: 2, // Kualitas HD agar tidak blur di Desktop
+      pixelRatio: 1.5, // 1.5 adalah angka paling aman untuk iOS agar tidak diburamkan otomatis
       backgroundColor: '#F8F9FA',
       width: targetWidth,
       height: targetHeight,
@@ -91,13 +94,13 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
         document.body.removeChild(printContainer);
 
         const filename = `${result.identity.replace(/\s+/g, '-').toLowerCase()}-merek.png`;
-        
+
         try {
           // 📱 iOS & Mobile Fallback: Native Web Share API
           if (navigator.share) {
             const blob = await (await fetch(dataUrl)).blob();
             const file = new File([blob], filename, { type: 'image/png' });
-            
+
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
               await navigator.share({
                 files: [file],
@@ -124,6 +127,133 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
         alert('Maaf, fitur unduh gagal di perangkat ini. Anda bisa langsung melakukan Screenshot layar Anda.');
       });
   }, [cardRef, result.identity]);
+
+  const handleExportPDF = useCallback(async () => {
+    if (cardRef.current === null) return;
+
+    const element = cardRef.current;
+    try {
+      const dataUrl = await htmlToImage.toPng(element, {
+        pixelRatio: 2,
+        backgroundColor: "#F8F9FA",
+      });
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [element.offsetWidth * 2, element.offsetHeight * 2]
+      });
+
+      pdf.addImage(dataUrl, "PNG", 0, 0, element.offsetWidth * 2, element.offsetHeight * 2);
+      pdf.save(`${result.identity.replace(/\s+/g, "-").toLowerCase()}-brand-strategy.pdf`);
+    } catch (err) {
+      console.error("PDF Export failed:", err);
+      alert("Gagal mengekspor PDF. Silakan coba gunakan fitur Screenshot.");
+    }
+  }, [result.identity]);
+
+  const handleExportPPTX = useCallback(() => {
+    const pptx = new pptxgen();
+    pptx.layout = "LAYOUT_WIDE";
+    pptx.defineSlideMaster({
+      title: "MASTER_SLIDE",
+      background: { color: "F8F9FA" },
+      margin: [0.5, 0.5, 0.5, 0.5],
+      footer: { x: 0.5, y: 7.0, w: "90%", h: 0.5, text: "AjoBranding AI - Strategi Merek Premium", fontSize: 10, color: "9CA3AF" }
+    });
+
+    // 1. Title Slide
+    let slide = pptx.addSlide({ masterName: "MASTER_SLIDE" });
+    slide.addShape(pptx.ShapeType.rect, { x: 0, y: 2.5, w: "100%", h: 2, fill: { color: "3B82F6" } });
+    slide.addText("AjoBranding Strategy", { x: 0, y: 2.8, w: "100%", fontSize: 48, bold: true, color: "FFFFFF", align: "center" });
+    slide.addText(result.identity, { x: 0, y: 3.8, w: "100%", fontSize: 32, bold: true, color: "FFFFFF", align: "center" });
+    slide.addText(`"${result.tagline}"`, { x: 0.5, y: 5.5, w: "90%", fontSize: 24, italic: true, color: "6B7280", align: "center" });
+
+    // 2. Brand Identity & Evaluation
+    slide = pptx.addSlide({ masterName: "MASTER_SLIDE" });
+    slide.addText("Identitas & Evaluasi Merek", { x: 0.5, y: 0.5, fontSize: 28, bold: true, color: "3B82F6" });
+    slide.addShape(pptx.ShapeType.line, { x: 0.5, y: 0.9, w: 12, h: 0, line: { color: "3B82F6", width: 2 } });
+
+    slide.addText("Nuansa Merek:", { x: 0.5, y: 1.5, fontSize: 18, bold: true, color: "1F2937" });
+    slide.addText(result.vibe, { x: 0.5, y: 1.9, fontSize: 16, color: "4B5563" });
+
+    if (result.brandName) {
+      slide.addText("Skor Potensi Nama:", { x: 7, y: 1.5, fontSize: 18, bold: true, color: "1F2937" });
+      slide.addText(`${result.brandName.potentialScore}/100`, { x: 7, y: 1.9, fontSize: 24, bold: true, color: "3B82F6" });
+
+      slide.addText("Evaluasi Ajo:", { x: 0.5, y: 3.0, fontSize: 14, bold: true, color: "3B82F6" });
+      slide.addText(result.brandName.evaluation, { x: 0.5, y: 3.3, w: 12, fontSize: 11, color: "4B5563" });
+    }
+
+    // 3. Brand Kit (Audience & Positioning)
+    if (result.brandKit) {
+      slide = pptx.addSlide({ masterName: "MASTER_SLIDE" });
+      slide.addText("Target & Positioning", { x: 0.5, y: 0.5, fontSize: 28, bold: true, color: "3B82F6" });
+
+      const boxes = [
+        { title: "Target Audience", text: result.brandKit.targetAudience, color: "EFF6FF", textCol: "1E40AF" },
+        { title: "Positioning", text: result.brandKit.brandPositioning, color: "F0FDF4", textCol: "166534" },
+        { title: "Emotion Trigger", text: result.brandKit.emotionTrigger, color: "FAF5FF", textCol: "6B21A8" }
+      ];
+
+      boxes.forEach((box, i) => {
+        slide.addShape(pptx.ShapeType.rect, { x: 0.5 + (i * 4.3), y: 1.5, w: 4, h: 4, fill: { color: box.color }, line: { color: box.textCol, width: 1 } });
+        slide.addText(box.title, { x: 0.5 + (i * 4.3), y: 1.7, w: 4, fontSize: 18, bold: true, color: box.textCol, align: "center" });
+        slide.addText(box.text, { x: 0.7 + (i * 4.3), y: 2.2, w: 3.6, fontSize: 12, color: "374151", align: "center" });
+      });
+    }
+
+    // 4. Color Palette & Differentiation
+    slide = pptx.addSlide({ masterName: "MASTER_SLIDE" });
+    slide.addText("Warna & Diferensiasi", { x: 0.5, y: 0.5, fontSize: 28, bold: true, color: "3B82F6" });
+
+    if (result.palette) {
+      slide.addText("Palet Warna Premium:", { x: 0.5, y: 1.5, fontSize: 14, bold: true });
+      result.palette.forEach((color, idx) => {
+        slide.addShape(pptx.ShapeType.rect, { x: 0.5 + (idx * 1.5), y: 2.0, w: 1.3, h: 1.3, fill: { color: color.replace("#", "") }, line: { color: "FFFFFF", width: 2 } });
+        slide.addText(color, { x: 0.5 + (idx * 1.5), y: 3.4, w: 1.3, fontSize: 10, align: "center", fontFace: "Courier New" });
+      });
+    }
+
+    if (result.differentiation) {
+      slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 4.5, w: 12, h: 2, fill: { color: "FFFBEB" }, line: { color: "F59E0B", width: 1 } });
+      slide.addText("KEUNGGULAN UNIK (DIFFERENTIATION)", { x: 0.7, y: 4.7, fontSize: 12, bold: true, color: "B45309" });
+      slide.addText(result.differentiation, { x: 0.7, y: 5.1, w: 11.6, fontSize: 14, color: "92400E", italic: true });
+    }
+
+    // 5. Content & Visual Strategy
+    slide = pptx.addSlide({ masterName: "MASTER_SLIDE" });
+    slide.addText("Strategi Konten & Visual", { x: 0.5, y: 0.5, fontSize: 28, bold: true, color: "3B82F6" });
+
+    slide.addText("Caption Viral:", { x: 0.5, y: 1.5, fontSize: 14, bold: true, color: "3B82F6" });
+    slide.addText(result.caption, { x: 0.5, y: 1.8, w: 6, h: 4, fontSize: 11, color: "4B5563", valign: "top", border: { type: "dash", color: "CBD5E1" } });
+
+    slide.addText("Konsep Visual & Sinematik:", { x: 7, y: 1.5, fontSize: 14, bold: true, color: "3B82F6" });
+    const storyText = typeof result.story === "string" ? result.story : `Judul: ${result.story?.title}\n\nLogline: ${result.story?.logline}\n\nKonsep: ${result.story?.concept}`;
+    slide.addText(storyText, { x: 7, y: 1.8, w: 5.5, h: 4, fontSize: 11, color: "4B5563", valign: "top" });
+
+    // 6. Content Calendar
+    if (result.contentPlan && result.contentPlan["7DaysContent"]) {
+      slide = pptx.addSlide({ masterName: "MASTER_SLIDE" });
+      slide.addText("Kalender Konten 7 Hari", { x: 0.5, y: 0.5, fontSize: 28, bold: true, color: "3B82F6" });
+
+      result.contentPlan["7DaysContent"].forEach((plan, i) => {
+        const xPos = 0.5 + (i % 4) * 3.1;
+        const yPos = i < 4 ? 1.5 : 4.2;
+        slide.addShape(pptx.ShapeType.rect, { x: xPos, y: yPos, w: 2.8, h: 2.5, fill: { color: "F5F3FF" } });
+        slide.addText(`HARI ${i + 1}`, { x: xPos, y: yPos + 0.2, w: 2.8, fontSize: 14, bold: true, color: "7C3AED", align: "center" });
+        slide.addText(plan, { x: xPos + 0.1, y: yPos + 0.6, w: 2.6, fontSize: 10, color: "4C1D95", align: "center" });
+      });
+    }
+
+    // 7. Closing Slide
+    slide = pptx.addSlide({ masterName: "MASTER_SLIDE" });
+    slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: "100%", h: "100%", fill: { color: "3B82F6" } });
+    slide.addText("Siap Untuk Beraksi?", { x: 0, y: 3, w: "100%", fontSize: 44, bold: true, color: "FFFFFF", align: "center" });
+    slide.addText("Ajo Percaya Brand Kamu Bakal Meledak! 🚀", { x: 0, y: 4, w: "100%", fontSize: 24, color: "FFFFFF", align: "center" });
+
+    pptx.writeFile({ fileName: `${result.identity.replace(/\s+/g, "-").toLowerCase()}-presentation.pptx` });
+  }, [result]);
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -157,19 +287,36 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
           </div>
         </div>
 
-        <div className="flex justify-end w-full md:w-auto gap-3">
+        <div className="flex flex-wrap justify-end w-full md:w-auto gap-2">
           <button
             onClick={handleDownload}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-bold shadow-lg"
+            className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-bold shadow-md"
+            title="Unduh PNG"
           >
-            <Download className="w-4 h-4" />
-            Unduh PNG
+            <Download className="w-3.5 h-3.5" />
+            PNG
+          </button>
+          <button
+            onClick={handleExportPDF}
+            className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-rose-600 text-white hover:bg-rose-700 transition-colors text-xs font-bold shadow-md"
+            title="Unduh PDF"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            PDF
+          </button>
+          <button
+            onClick={handleExportPPTX}
+            className="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-orange-500 text-white hover:bg-orange-600 transition-colors text-xs font-bold shadow-md"
+            title="Unduh PPTX"
+          >
+            <Presentation className="w-3.5 h-3.5" />
+            PPTX
           </button>
           <button
             onClick={onReset}
-            className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-full glass hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-sm font-medium text-foreground"
+            className="flex items-center justify-center gap-2 px-4 py-2 rounded-full glass hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-xs font-medium text-foreground"
           >
-            <RefreshCcw className="w-4 h-4" />
+            <RefreshCcw className="w-3.5 h-3.5" />
             Ulangi
           </button>
         </div>
@@ -186,7 +333,7 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
         {/* Main Identity Header */}
         <motion.div variants={itemVariants} className="glass-panel rounded-3xl p-8 md:p-10 bg-gradient-to-br from-primary/10 via-background to-transparent border-primary/20 relative overflow-hidden">
           <div className="absolute right-0 top-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
-          <h2 className="text-5xl md:text-6xl font-black text-foreground mb-4 leading-tight tracking-tight relative z-10">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-foreground mb-4 leading-tight tracking-tight relative z-10">
             {result.identity.split(" ")[0]} <span className="text-gradient-gold">{result.identity.split(" ").slice(1).join(" ")}</span>
           </h2>
           <div className="inline-flex items-center px-4 py-2 bg-background/80 backdrop-blur-sm text-primary rounded-full font-bold tracking-widest uppercase text-xs border border-primary/20 shadow-sm relative z-10">
@@ -194,75 +341,130 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
           </div>
         </motion.div>
 
-        {/* 2-Column Grid for Top Cards to prevent narrow elongated look */}
+        {/* TAGLINE BANNER (FULL WIDTH) */}
+        <motion.div variants={itemVariants} className="glass-panel rounded-3xl p-8 flex flex-col justify-center items-center relative overflow-hidden group border border-primary/20 bg-gradient-to-r from-primary/5 via-background to-primary/5 shadow-sm">
+          <Quote className="w-16 h-16 text-primary/10 absolute top-4 left-4" />
+          <p className="text-2xl sm:text-3xl md:text-4xl font-black text-center leading-snug text-primary/90 z-10 px-8 italic tracking-tight">
+            "{result.tagline}"
+          </p>
+          <Quote className="w-16 h-16 text-primary/10 absolute bottom-4 right-4 rotate-180" />
+        </motion.div>
+
+        {/* 2-Column Grid for Brand Name & Brand Kit */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Brand Name Eval */}
           {result.brandName && (
-            <motion.div variants={itemVariants} className="glass-panel rounded-3xl p-6 bg-gradient-to-br from-blue-500/5 to-transparent flex flex-col h-full border border-blue-500/10">
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="w-4 h-4 text-blue-500" />
-                <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">Nama Merek</h3>
+            <motion.div variants={itemVariants} className="glass-panel rounded-3xl p-8 bg-gradient-to-br from-blue-500/5 to-transparent flex flex-col h-full border border-blue-500/10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-blue-500/10 rounded-xl">
+                  <Sparkles className="w-5 h-5 text-blue-600" />
+                </div>
+                <h3 className="font-bold text-foreground text-sm uppercase tracking-widest">Nama Merek</h3>
               </div>
-              <div className="mb-4">
-                <span className="text-3xl font-black text-blue-600">{result.brandName.potentialScore}</span>
-                <span className="text-sm text-muted-foreground font-bold">/100 Skor</span>
+              <div className="mb-6 flex items-baseline gap-2">
+                <span className="text-4xl font-black text-blue-600">{result.brandName.potentialScore}</span>
+                <span className="text-sm text-muted-foreground font-bold uppercase tracking-widest">/100 Skor</span>
               </div>
-              <p className="text-sm text-foreground leading-relaxed text-justify mb-4 flex-grow opacity-90">
+              <p className="text-sm text-foreground leading-relaxed text-justify mb-6 flex-grow opacity-90">
                 {result.brandName.evaluation.replace(/\*\*/g, '').replace(/\*/g, '')}
               </p>
               {result.brandName.suggestions && result.brandName.suggestions.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-auto pt-4 border-t border-blue-500/10">
-                  {result.brandName.suggestions.map((s, i) => (
-                    <span key={i} className="px-2 py-1 bg-white/50 dark:bg-black/20 rounded-md text-xs font-bold text-blue-700">
-                      Saran {i + 1}: {s.replace(/\*\*/g, '').replace(/\*/g, '').replace(/^Saran \d+:/i, '').trim()}
-                    </span>
-                  ))}
+                <div className="flex flex-col gap-2 mt-auto pt-6 border-t border-blue-500/10">
+                  <span className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-1">Rekomendasi Nama:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {result.brandName.suggestions.map((s, i) => (
+                      <span key={i} className="px-3 py-1.5 bg-blue-500/10 rounded-lg text-xs font-bold text-blue-700 dark:text-blue-400 border border-blue-500/20">
+                        {s.replace(/\*\*/g, '').replace(/\*/g, '').replace(/^Saran \d+:/i, '').trim()}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               )}
             </motion.div>
           )}
 
-          {/* Tagline */}
-          <motion.div variants={itemVariants} className="glass-panel rounded-3xl p-6 flex flex-col justify-center items-center relative overflow-hidden group border border-primary/10 min-h-[250px]">
-            <Quote className="w-12 h-12 text-primary/10 absolute top-4 left-4" />
-            <p className="text-2xl md:text-3xl font-black text-center leading-snug text-foreground z-10 px-4">
-              "{result.tagline}"
-            </p>
-          </motion.div>
-
-          <motion.div variants={itemVariants} className="glass-panel rounded-3xl p-6 border border-primary/10">
-            <div className="flex items-center gap-2 mb-6">
-              <Palette className="w-4 h-4 text-primary" />
-              <h3 className="font-bold text-foreground text-sm uppercase tracking-wider">Palet Warna</h3>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-4 h-[calc(100%-3rem)]">
-              {result.palette.map((color, idx) => (
-                <div key={idx} className="flex flex-col items-center justify-center gap-2 bg-background/50 rounded-xl p-3 border border-primary/5 hover:scale-105 transition-transform flex-grow">
-                  <div className="w-12 h-12 rounded-full shadow-inner" style={{ backgroundColor: color }} />
-                  <span className="text-xs font-mono font-bold text-muted-foreground uppercase">{color}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
           {/* Brand Kit */}
           {result.brandKit && (
-            <motion.div variants={itemVariants} className="glass-panel rounded-3xl p-6 flex flex-col gap-4 border border-primary/10">
-              <h3 className="font-bold text-foreground text-sm uppercase tracking-wider mb-2">Pilar Merek</h3>
-              <div className="space-y-4">
-                <div>
-                  <span className="text-[10px] text-primary font-bold uppercase tracking-widest block mb-1">Target Audience</span>
-                  <p className="text-xs font-medium text-foreground opacity-90">{result.brandKit.targetAudience}</p>
+            <motion.div variants={itemVariants} className="glass-panel rounded-3xl p-8 flex flex-col gap-6 border border-primary/10">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-primary/10 rounded-xl">
+                  <Target className="w-5 h-5 text-primary" />
                 </div>
-                <div>
-                  <span className="text-[10px] text-primary font-bold uppercase tracking-widest block mb-1">Positioning</span>
-                  <p className="text-xs font-medium text-foreground opacity-90">{result.brandKit.brandPositioning}</p>
+                <h3 className="font-bold text-foreground text-sm uppercase tracking-widest">Pilar Merek</h3>
+              </div>
+              <div className="space-y-6 flex-grow flex flex-col justify-center">
+                <div className="flex gap-4 items-start">
+                  <div className="mt-1 p-1.5 bg-rose-500/10 rounded-lg shrink-0">
+                    <Users className="w-4 h-4 text-rose-500" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-rose-500 font-bold uppercase tracking-widest block mb-1">Target Audience</span>
+                    <p className="text-sm font-medium text-foreground opacity-90 leading-relaxed">{result.brandKit.targetAudience}</p>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-[10px] text-primary font-bold uppercase tracking-widest block mb-1">Emotion Trigger</span>
-                  <p className="text-xs font-medium text-foreground opacity-90">{result.brandKit.emotionTrigger}</p>
+
+                <div className="flex gap-4 items-start">
+                  <div className="mt-1 p-1.5 bg-emerald-500/10 rounded-lg shrink-0">
+                    <Target className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest block mb-1">Positioning</span>
+                    <p className="text-sm font-medium text-foreground opacity-90 leading-relaxed">{result.brandKit.brandPositioning}</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="mt-1 p-1.5 bg-purple-500/10 rounded-lg shrink-0">
+                    <Heart className="w-4 h-4 text-purple-500" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-purple-500 font-bold uppercase tracking-widest block mb-1">Emotion Trigger</span>
+                    <p className="text-sm font-medium text-foreground opacity-90 leading-relaxed">{result.brandKit.emotionTrigger}</p>
+                  </div>
                 </div>
               </div>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Palette & Differentiation */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Brand Palette */}
+          {result.palette && result.palette.length > 0 && (
+            <motion.div variants={itemVariants} className="glass-panel rounded-3xl p-8 border border-primary/10 flex flex-col gap-6">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-xl">
+                  <Palette className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="font-bold text-foreground text-sm uppercase tracking-widest">Palet Warna</h3>
+              </div>
+              <div className="grid grid-cols-5 gap-3">
+                {result.palette.map((color, idx) => (
+                  <div key={idx} className="flex flex-col gap-2">
+                    <div
+                      className="aspect-square rounded-2xl shadow-inner border border-black/5 dark:border-white/10"
+                      style={{ backgroundColor: color }}
+                      title={color}
+                    />
+                    <span className="text-[10px] font-mono text-center opacity-60 truncate uppercase">{color}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Differentiation */}
+          {result.differentiation && (
+            <motion.div variants={itemVariants} className="glass-panel rounded-3xl p-8 border border-amber-500/20 bg-amber-500/5">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-amber-500/10 rounded-xl">
+                  <Zap className="w-5 h-5 text-amber-600" />
+                </div>
+                <h3 className="font-bold text-foreground text-sm uppercase tracking-widest">Keunggulan Unik</h3>
+              </div>
+              <p className="text-sm leading-relaxed text-justify opacity-90">
+                {result.differentiation.replace(/\*\*/g, '').replace(/\*/g, '')}
+              </p>
             </motion.div>
           )}
         </div>

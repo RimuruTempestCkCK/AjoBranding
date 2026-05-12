@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Upload, Image as ImageIcon, X, Loader2 } from "lucide-react";
+import { Upload, Image as ImageIcon, X, Loader2, Mic, MicOff } from "lucide-react";
 import clsx from "clsx";
 
 interface UploadBoxProps {
@@ -15,7 +15,29 @@ export function UploadBox({ onImageSelect, isLoading, onError }: UploadBoxProps)
   const [dragActive, setDragActive] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [brandName, setBrandName] = useState("");
+  const [isListening, setIsListening] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const startListening = () => {
+    if (!('webkitSpeechRecognition' in window) && !('speechRecognition' in window)) {
+      alert("Maaf, browser Anda tidak mendukung fitur pengenalan suara.");
+      return;
+    }
+
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).speechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'id-ID';
+    recognition.interimResults = false;
+
+    recognition.onstart = () => setIsListening(true);
+    recognition.onend = () => setIsListening(false);
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setBrandName(transcript);
+    };
+
+    recognition.start();
+  };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -77,15 +99,29 @@ export function UploadBox({ onImageSelect, isLoading, onError }: UploadBoxProps)
         <p className="text-xs text-muted-foreground mb-4">
           Isi sebelum mengunggah gambar jika Anda sudah memiliki nama. Jika dikosongkan, AI akan menyarankan 3 nama premium untuk Anda.
         </p>
-        <input
-          type="text"
-          id="brandName"
-          placeholder="Misal: Kopi Senja, atau biarkan kosong"
-          className="w-full px-5 py-3 rounded-xl border border-primary/20 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-foreground"
-          value={brandName}
-          onChange={(e) => setBrandName(e.target.value)}
-          disabled={isLoading || previewUrl !== null}
-        />
+        <div className="relative">
+          <input
+            type="text"
+            id="brandName"
+            placeholder="Misal: Kopi Senja, atau biarkan kosong"
+            className="w-full pl-5 pr-12 py-3 rounded-xl border border-primary/20 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all text-foreground"
+            value={brandName}
+            onChange={(e) => setBrandName(e.target.value)}
+            disabled={isLoading || previewUrl !== null}
+          />
+          <button
+            type="button"
+            onClick={startListening}
+            disabled={isLoading || previewUrl !== null}
+            className={clsx(
+              "absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-colors",
+              isListening ? "bg-red-500 text-white animate-pulse" : "text-primary hover:bg-primary/10"
+            )}
+            title={isListening ? "Mendengarkan..." : "Gunakan Suara"}
+          >
+            {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       <motion.div

@@ -5,6 +5,7 @@ import { Hero } from "@/components/Hero";
 import { UploadBox } from "@/components/UploadBox";
 import { ResultCard } from "@/components/ResultCard";
 import { HistoryList } from "@/components/HistoryList";
+import { ChatPanel } from "@/components/ChatPanel";
 import { BrandIdentityResult, HistoryItem } from "@/types/brand";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -117,6 +118,7 @@ export default function Home() {
                 setResult(null);
                 setImageUrl(null);
               }} />
+              <ChatPanel brandContext={result} />
             </motion.div>
           )}
         </AnimatePresence>
