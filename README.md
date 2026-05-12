@@ -1,15 +1,15 @@
 <div align="center">
 
 # ✨ AjoBranding
-### 🤖 Studio Branding AI untuk Semua Orang
+### 🤖 Studio Branding AI Terlengkap untuk UMKM & Kreator
 
 <br/>
 
-> **"Sini Ajo Bantuin Biar Branding Kamu Makin Kece!"**
+> **"Sini Ajo Bantuin Biar Branding Kamu Makin Kece & Profesional!"**
 
 <br/>
 
-🚀 **Perjalanan #JuaraVibeCoding** — dari satu foto biasa, lahir sebuah brand yang luar biasa.
+🚀 **Perjalanan #JuaraVibeCoding** — Transformasi ide brand dari satu foto menjadi ekosistem identitas bisnis premium yang siap tempur.
 
 <br/>
 
@@ -46,21 +46,15 @@ Pernah nggak ngerasa kayak gini...
 
 > *"Produkku udah enak, udah berkualitas — tapi kok penjualan segitu-gitu aja ya? Temen yang brandingnya bagus malah laku keras padahal produknya biasa aja!"* 😭
 
-Itu bukan salahmu. Itu karena **persepsi visual adalah segalanya** di era digital ini.
-
-Jutaan UMKM Indonesia punya produk luar biasa tapi terjebak dalam lingkaran yang sama: mau branding profesional — mahal. Mau tampil kece — butuh keahlian desain. Akhirnya? Kalah sebelum bersaing. 💔
+Itu bukan salahmu. Itu karena **persepsi visual adalah segalanya** di era digital ini. Jutaan UMKM Indonesia punya produk luar biasa tapi terjebak dalam lingkaran yang sama: mau branding profesional — mahal. Mau tampil kece — butuh keahlian desain. Akhirnya? Kalah sebelum bersaing. 💔
 
 **AjoBranding hadir untuk memutus lingkaran itu.** Kami percaya setiap pedagang kecil berhak tampil seperti brand besar — tanpa harus merogoh kocek jutaan rupiah.
 
 ---
 
-### 🌟 Apa yang Kamu Dapat dari Ajo?
+### 🌟 Fitur Unggulan Ajo (New Updates! 🔥)
 
 Upload satu foto → dapatkan **Brand Universe lengkap** dalam detik! ⚡
-
-```
-📸 Foto Kamu  ──►  🤖 Ajo Analisis  ──►  🎉 Brand Universe Siap!
-```
 
 Ini yang langsung Ajo hasilkan:
 
@@ -70,9 +64,10 @@ Ini yang langsung Ajo hasilkan:
 | 💬 **Tagline yang Nempel di Hati** | Kalimat singkat yang bikin orang langsung ingat brandmu |
 | 🎨 **Palet Warna HEX Premium** | Kombinasi warna estetik yang konsisten & profesional |
 | 📅 **Kalender Konten 7 Hari** | Ide konten siap pakai untuk seminggu penuh! |
-| 📣 **Strategi Pemasaran Tanpa Modal** | Taktik jualan yang bisa langsung dipraktikkan hari ini |
-| 💰 **Ide Monetisasi Cerdas** | Cara-cara kreatif menghasilkan lebih dari brandmu |
-| 🖼️ **Download Dashboard PNG** | Simpan seluruh brand kit-mu sebagai mood board visual |
+| 🚀 **Ekspor PDF & PPTX** | **[NEW]** Unduh strategi brand dalam format presentasi profesional |
+| 🎙️ **Voice Input Support** | **[NEW]** Malas mengetik? Cukup diktekan ide brandmu ke Ajo! |
+| 💬 **Tanya Ajo (Chatbot)** | **[NEW]** Konsultasi follow-up langsung dengan Ajo Mentor |
+| 🖼️ **Download PNG & History** | Simpan dashboard hasil analisis ke galeri atau cek riwayat lama |
 
 ---
 
@@ -92,42 +87,22 @@ Waktu Ajo ngomong ke kamu, rasanya kayak lagi curhat sama senior yang udah sukse
 
 Di balik tampilan yang ramah, ada teknologi yang powerful banget:
 
-- 🔬 **Google Gemini Vision API** membedah DNA visual dari fotomu — dari emosi, warna, hingga potensi pasarnya
-- 📐 **Zero-shot JSON Schema Enforcement** memastikan output AI selalu rapi, terstruktur, dan siap ditampilkan
-- ⚡ **Dynamic Dashboard Rendering** mengubah data mentah jadi UI premium yang indah secara real-time
+- 🔬 **Google Gemini Flash (Vision)** membedah DNA visual dari fotomu — dari emosi, warna, hingga potensi pasarnya.
+- 📐 **Structured Data Output** memastikan output AI selalu rapi, terstruktur, dan siap ditampilkan.
+- ⚡ **Dynamic Dashboard Rendering** mengubah data mentah jadi UI premium yang indah secara real-time.
 - 💾 **Local History System** menyimpan semua brand yang pernah kamu buat — nggak ada ide yang hilang!
 
 ---
 
 ## 🎬 Cara Pakainya (5 Langkah, Dijamin Bisa!)
 
-Nggak perlu jadi desainer. Nggak perlu paham marketing. Nggak perlu pengalaman branding. Cukup ikuti ini:
+Nggak perlu jadi desainer. Cukup ikuti ini:
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                                                             │
-│  📤  STEP 1 — UPLOAD                                        │
-│      Drag & drop foto produk, selfie, atau suasana tokomu  │
-│      Bisa juga masukin nama brandmu (opsional!)            │
-│                                                             │
-│  ⚡  STEP 2 — ANALISIS                                      │
-│      Santai, Ajo lagi "mikir" keras buat brandingmu        │
-│      Animasi loading interaktif menemanimu menunggu        │
-│                                                             │
-│  🎉  STEP 3 — HASIL                                         │
-│      Dashboard brand universe-mu muncul otomatis!          │
-│      Semua tersaji rapi dalam kartu-kartu elegan           │
-│                                                             │
-│  📋  STEP 4 — TERAPKAN                                      │
-│      Baca saran Ajo, salin ide konten, atau                │
-│      klik "Unduh PNG" buat simpan brand kit-mu!            │
-│                                                             │
-│  🔁  STEP 5 — EKSPLORASI                                    │
-│      Cek Riwayat Brand kapanpun kamu mau                   │
-│      Bandingkan, pilih, dan terus berkembang!              │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+1.  📤 **STEP 1 — UPLOAD**: Drag & drop foto produk atau tokomu.
+2.  🎙️ **STEP 2 — INPUT**: Masukkan nama brand (bisa pakai **Suara/Voice**!).
+3.  ⚡ **STEP 3 — ANALISIS**: Ajo bakal memproses strategi brandingmu.
+4.  🎉 **STEP 4 — HASIL**: Dashboard premium muncul! Baca saran & strategi Ajo.
+5.  📥 **STEP 5 — EKSPOUR**: Unduh sebagai **PDF, PowerPoint,** atau **PNG**!
 
 ---
 
@@ -135,64 +110,50 @@ Nggak perlu jadi desainer. Nggak perlu paham marketing. Nggak perlu pengalaman b
 
 AjoBranding dibangun dengan teknologi modern yang cepat, aman, dan indah:
 
-```
-🏗️  Framework    →  Next.js 16 (App Router + Turbopack)
-🎨  Styling      →  Tailwind CSS 4 (Custom Glassmorphism)
-✨  Animasi      →  Framer Motion (Micro-interactions & Page Transitions)
-🤖  AI Brain     →  Google Gemini API (Multimodal Image-to-Text)
-🖼️  Export       →  html-to-image (Client-side PNG rendering)
-🔤  Icons        →  lucide-react (Ikonografi modern)
-💾  Storage      →  LocalStorage (Riwayat sesi yang super cepat)
-```
+- 🏗️ **Framework** → Next.js 16 (App Router + Turbopack)
+- 🎨 **Styling** → Tailwind CSS 4 (Custom Glassmorphism)
+- ✨ **Animasi** → Framer Motion (Micro-interactions)
+- 🤖 **AI Brain** → Google Gemini API (2.0-Flash / 1.5-Flash)
+- 🎙️ **Speech** → Web Speech API (Voice-to-Text)
+- 📄 **Export** → jsPDF & pptxgenjs (Professional Document Export)
+- 💾 **Storage** → LocalStorage (History System)
 
 ---
 
 ## ⚙️ Jalankan di Lokal Kamu
 
-Mau coba AjoBranding di komputer sendiri? Gampang banget! 💪
-
 ### 1️⃣ Clone repository ini
-
 ```bash
 git clone https://github.com/RimuruTempestCkCK/AjoBranding.git
 cd AjoBranding
 ```
 
-### 2️⃣ Install semua dependencies
-
+### 2️⃣ Install dependencies
 ```bash
 npm install
 ```
 
 ### 3️⃣ Setup API Key
-
-Buat file `.env.local` di root project, lalu isi seperti ini:
-
+Buat file `.env.local` dan isi:
 ```env
 GEMINI_API_KEY=kunci_api_google_gemini_kamu_di_sini
 ```
 
-> 🔑 Belum punya API Key? Daftar gratis di [Google AI Studio](https://aistudio.google.com/)!
-
-### 4️⃣ Jalankan & Mulai!
-
+### 4️⃣ Jalankan!
 ```bash
 npm run dev
 ```
 
-Buka [http://localhost:3000](http://localhost:3000) dan mulai sesi pertamamu bareng Ajo! 🎊
-
 ---
 
-## 🗺️ Roadmap ke Depan
+## 🗺️ Roadmap Proyek
 
-Perjalanan #JuaraVibeCoding masih terus berlanjut! Ini yang sedang kami rencanakan:
-
-- [ ] 🌐 Export hasil ke format PDF & PowerPoint
-- [ ] 📱 Tampilan mobile yang lebih optimal
-- [ ] 🤝 Fitur kolaborasi tim untuk satu brand
-- [ ] 🗂️ Cloud sync riwayat brand lintas perangkat
-- [ ] 🎙️ Input suara — ceritain brandmu, biar Ajo yang analisis!
+- [x] 🌐 Export hasil ke format PDF & PowerPoint
+- [x] 📱 Tampilan mobile yang lebih optimal (Pixel-Perfect)
+- [x] 🎙️ Input suara (Web Speech API integration)
+- [x] 💬 Fitur "Tanya Ajo" follow-up chat
+- [ ] 🤝 Fitur kolaborasi tim
+- [ ] 🗂️ Cloud sync riwayat brand
 
 ---
 
