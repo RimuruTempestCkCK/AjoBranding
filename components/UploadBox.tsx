@@ -18,25 +18,58 @@ export function UploadBox({ onImageSelect, isLoading, onError }: UploadBoxProps)
   const [isListening, setIsListening] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const recognitionRef = useRef<any>(null);
+
   const startListening = () => {
-    if (!('webkitSpeechRecognition' in window) && !('speechRecognition' in window)) {
-      alert("Maaf, browser Anda tidak mendukung fitur pengenalan suara.");
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
       return;
     }
 
     const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).speechRecognition;
+    if (!SpeechRecognition) {
+      alert("Maaf, browser Anda tidak mendukung fitur pengenalan suara.");
+      return;
+    }
+
     const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
     recognition.lang = 'id-ID';
-    recognition.interimResults = false;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
 
     recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
+    recognition.onend = () => {
+      setIsListening(false);
+      recognitionRef.current = null;
+    };
+    
+    recognition.onerror = (event: any) => {
+      console.error("Speech recognition error:", event.error);
+      setIsListening(false);
+      if (event.error === 'not-allowed') {
+        alert("Akses mikrofon ditolak. Mohon izinkan mikrofon di pengaturan browser Anda.");
+      } else if (event.error === 'no-speech') {
+        // Abaikan atau beri tahu user secara halus
+        console.warn("Ajo nggak denger apa-apa nih, coba ngomong lagi ya!");
+      }
+    };
+
     recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
+      const transcript = Array.from(event.results)
+        .map((result: any) => result[0])
+        .map((result) => result.transcript)
+        .join('');
+      
       setBrandName(transcript);
     };
 
-    recognition.start();
+    try {
+      recognition.start();
+    } catch (err) {
+      console.error("Failed to start recognition:", err);
+      setIsListening(false);
+    }
   };
 
   const handleDrag = (e: React.DragEvent) => {
