@@ -159,7 +159,9 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
       title: "MASTER_SLIDE",
       background: { color: "F8F9FA" },
       margin: [0.5, 0.5, 0.5, 0.5],
-      footer: { x: 0.5, y: 7.0, w: "90%", h: 0.5, text: "AjoBranding AI - Strategi Merek Premium", fontSize: 10, color: "9CA3AF" }
+      objects: [
+        { text: { text: "AjoBranding AI - Strategi Merek Premium", options: { x: 0.5, y: 7.0, w: 12, fontSize: 10, color: "9CA3AF", align: "center" } } }
+      ]
     });
 
     // 1. Title Slide
@@ -182,7 +184,7 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
       slide.addText(`${result.brandName.potentialScore}/100`, { x: 7, y: 1.9, fontSize: 24, bold: true, color: "3B82F6" });
 
       slide.addText("Evaluasi Ajo:", { x: 0.5, y: 3.0, fontSize: 14, bold: true, color: "3B82F6" });
-      slide.addText(result.brandName.evaluation, { x: 0.5, y: 3.3, w: 12, fontSize: 11, color: "4B5563" });
+      slide.addText(result.brandName.evaluation || "", { x: 0.5, y: 3.3, w: 12, fontSize: 11, color: "4B5563" });
     }
 
     // 3. Brand Kit (Audience & Positioning)
@@ -199,7 +201,7 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
       boxes.forEach((box, i) => {
         slide.addShape(pptx.ShapeType.rect, { x: 0.5 + (i * 4.3), y: 1.5, w: 4, h: 4, fill: { color: box.color }, line: { color: box.textCol, width: 1 } });
         slide.addText(box.title, { x: 0.5 + (i * 4.3), y: 1.7, w: 4, fontSize: 18, bold: true, color: box.textCol, align: "center" });
-        slide.addText(box.text, { x: 0.7 + (i * 4.3), y: 2.2, w: 3.6, fontSize: 12, color: "374151", align: "center" });
+        slide.addText(box.text || "", { x: 0.7 + (i * 4.3), y: 2.2, w: 3.6, fontSize: 12, color: "374151", align: "center" });
       });
     }
 
@@ -226,10 +228,12 @@ export function ResultCard({ result, imageUrl, onReset }: ResultCardProps) {
     slide.addText("Strategi Konten & Visual", { x: 0.5, y: 0.5, fontSize: 28, bold: true, color: "3B82F6" });
 
     slide.addText("Caption Viral:", { x: 0.5, y: 1.5, fontSize: 14, bold: true, color: "3B82F6" });
-    slide.addText(result.caption, { x: 0.5, y: 1.8, w: 6, h: 4, fontSize: 11, color: "4B5563", valign: "top", border: { type: "dash", color: "CBD5E1" } });
+    slide.addText(result.caption, { x: 0.5, y: 1.8, w: 6, h: 4, fontSize: 11, color: "4B5563", valign: "top" });
 
     slide.addText("Konsep Visual & Sinematik:", { x: 7, y: 1.5, fontSize: 14, bold: true, color: "3B82F6" });
-    const storyText = typeof result.story === "string" ? result.story : `Judul: ${result.story?.title}\n\nLogline: ${result.story?.logline}\n\nKonsep: ${result.story?.concept}`;
+    const storyText = typeof result.story === "string" 
+      ? result.story 
+      : `Judul: ${result.story?.title || "-"}\n\nLogline: ${result.story?.logline || "-"}\n\nKonsep: ${result.story?.concept || "-"}`;
     slide.addText(storyText, { x: 7, y: 1.8, w: 5.5, h: 4, fontSize: 11, color: "4B5563", valign: "top" });
 
     // 6. Content Calendar
