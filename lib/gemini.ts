@@ -6,7 +6,9 @@ if (!process.env.GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "dummy-key");
 
-export const geminiModel = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); // or gemini-2.5-pro, using flash for speed/vision
+const modelName = "gemini-1.5-flash";
+console.log("Main model initialized:", modelName);
+export const geminiModel = genAI.getGenerativeModel({ model: modelName }); // using flash for speed/vision
 
 export async function fileToGenerativePart(file: File): Promise<{
   inlineData: { data: string; mimeType: string };

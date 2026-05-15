@@ -67,11 +67,12 @@ export default function Home() {
         body: formData,
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("Gagal menghasilkan identitas merek");
+        throw new Error(data.details || data.error || "Gagal menghasilkan identitas merek");
       }
 
-      const data = await response.json();
       setResult(data as BrandIdentityResult);
       saveToHistory(data as BrandIdentityResult);
     } catch (err: any) {

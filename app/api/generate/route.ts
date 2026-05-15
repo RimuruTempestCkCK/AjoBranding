@@ -50,6 +50,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(brandData);
   } catch (error: any) {
     console.error("Error generating brand identity:", error);
-    return NextResponse.json({ error: error.message || "Failed to generate brand identity" }, { status: 500 });
+    return NextResponse.json({ 
+      error: "Gagal menghasilkan identitas merek.", 
+      details: error.message 
+    }, { status: 500 });
   }
 }

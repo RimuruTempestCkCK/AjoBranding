@@ -12,7 +12,9 @@ export async function POST(req: Request) {
     }
 
     // Gunakan model yang sama dengan yang ada di lib/gemini.ts
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const modelName = "gemini-1.5-flash";
+    console.log("Using model:", modelName);
+    const model = genAI.getGenerativeModel({ model: modelName });
 
     const prompt = `
       Anda adalah "Ajo", mentor branding UMKM Indonesia yang ramah. 
