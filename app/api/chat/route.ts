@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     // Gunakan model yang sama dengan yang ada di lib/gemini.ts
-    const modelName = "gemini-1.5-flash";
+    const modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
     console.log("Using model:", modelName);
     const model = genAI.getGenerativeModel({ model: modelName });
 

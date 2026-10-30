@@ -44,9 +44,9 @@ export default function RootLayout({
           <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 flex flex-col items-center justify-center gap-4 relative z-10">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-muted-foreground">
-                © {currentYear} Dibuat dengan 
+                © {currentYear} Dibuat 
               </span>
-              <span className="text-red-500 animate-pulse">❤️</span>
+              {/* <span className="text-red-500 animate-pulse">❤️</span> */}
               <span className="text-sm font-medium text-muted-foreground">
                 oleh <strong className="text-foreground">Firdinal Juliandre</strong>
               </span>

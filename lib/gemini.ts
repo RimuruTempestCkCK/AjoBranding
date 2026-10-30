@@ -6,7 +6,7 @@ if (!process.env.GEMINI_API_KEY) {
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "dummy-key");
 
-const modelName = "gemini-1.5-flash";
+const modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 console.log("Main model initialized:", modelName);
 export const geminiModel = genAI.getGenerativeModel({ model: modelName }); // using flash for speed/vision
 
