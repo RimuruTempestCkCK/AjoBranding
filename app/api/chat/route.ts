@@ -1,33 +1,42 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-
 export async function POST(req: Request) {
   try {
     const { message, brandContext, history } = await req.json();
 
-    if (!process.env.GEMINI_API_KEY) {
+    if (!message || typeof message !== "string") {
+      return NextResponse.json({ error: "Pesan tidak boleh kosong." }, { status: 400 });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
       return NextResponse.json({ error: "API Key tidak dikonfigurasi." }, { status: 500 });
     }
 
-    // Gunakan model yang sama dengan yang ada di lib/gemini.ts
+    const genAI = new GoogleGenerativeAI(apiKey);
     const modelName = process.env.GEMINI_MODEL || "gemini-3.5-flash";
-    console.log("Using model:", modelName);
     const model = genAI.getGenerativeModel({ model: modelName });
+
+    const safeBrandContext = {
+      identity: brandContext?.identity || "Belum ditentukan",
+      tagline: brandContext?.tagline || "-",
+      vibe: brandContext?.vibe || "-",
+      palette: Array.isArray(brandContext?.palette) ? brandContext.palette.join(", ") : "-",
+    };
 
     const prompt = `
       Anda adalah "Ajo", mentor branding UMKM Indonesia yang ramah. 
       Gunakan bahasa santai, akrab (seperti "Ajo bantuin", "kece", "cuan"), dan solutif.
       
       KONTEKS BRAND SAAT INI:
-      Merek: ${brandContext.identity}
-      Tagline: ${brandContext.tagline}
-      Vibe: ${brandContext.vibe}
-      Warna: ${brandContext.palette?.join(", ")}
+      Merek: ${safeBrandContext.identity}
+      Tagline: ${safeBrandContext.tagline}
+      Vibe: ${safeBrandContext.vibe}
+      Warna: ${safeBrandContext.palette}
       
       RIWAYAT CHAT TERAKHIR:
-      ${JSON.stringify(history)}
+      ${JSON.stringify(history || [])}
       
       PERTANYAAN USER:
       ${message}
@@ -45,9 +54,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ text });
   } catch (error: any) {
     console.error("Chat API Error:", error);
-    return NextResponse.json({ 
-      error: "Gagal memproses pesan.", 
-      details: error.message 
-    }, { status: 500 });
+    return NextResponse.json(
+      { 
+        error: "Gagal memproses pesan.", 
+        details: error.message 
+      },
+      { status: 500 }
+    );
   }
 }

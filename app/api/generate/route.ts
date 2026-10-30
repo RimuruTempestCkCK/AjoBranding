@@ -2,14 +2,31 @@ import { NextRequest, NextResponse } from "next/server";
 import { geminiModel } from "@/lib/gemini";
 import { SYSTEM_PROMPT } from "@/constants/prompts";
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // Maksimal 10MB
+const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const file = formData.get("image") as File;
+    const file = formData.get("image") as File | null;
     const brandName = formData.get("brandName") as string | null;
 
     if (!file) {
-      return NextResponse.json({ error: "No image provided" }, { status: 400 });
+      return NextResponse.json({ error: "Gambar produk wajib diunggah." }, { status: 400 });
+    }
+
+    if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+      return NextResponse.json(
+        { error: "Format gambar tidak didukung. Gunakan JPEG, PNG, WEBP, atau HEIC." },
+        { status: 400 }
+      );
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: "Ukuran gambar terlalu besar. Maksimal 10MB." },
+        { status: 400 }
+      );
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -33,15 +50,14 @@ export async function POST(req: NextRequest) {
     const responseText = result.response.text();
 
     // Clean up potential markdown formatting like ```json ... ```
-    let jsonString = responseText;
+    let jsonString = responseText.trim();
     const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
     if (jsonMatch) {
-      jsonString = jsonMatch[1];
+      jsonString = jsonMatch[1].trim();
     } else {
-      // try to extract just the curly braces
       const braceMatch = responseText.match(/\{[\s\S]*\}/);
       if (braceMatch) {
-        jsonString = braceMatch[0];
+        jsonString = braceMatch[0].trim();
       }
     }
 
@@ -50,9 +66,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(brandData);
   } catch (error: any) {
     console.error("Error generating brand identity:", error);
-    return NextResponse.json({ 
-      error: "Gagal menghasilkan identitas merek.", 
-      details: error.message 
-    }, { status: 500 });
+    return NextResponse.json(
+      { 
+        error: "Gagal menghasilkan identitas merek.", 
+        details: error.message 
+      },
+      { status: 500 }
+    );
   }
 }
