@@ -1,7 +1,7 @@
 import { BrandIdentityResult } from "@/types/brand";
 import { motion } from "framer-motion";
-import { Palette, Quote, Zap, Share2, Film, RefreshCcw, Download, Users, Target, Heart, Sparkles, FileText, Presentation } from "lucide-react";
-import { useRef, useCallback } from "react";
+import { Palette, Quote, Zap, Share2, Film, RefreshCcw, Download, Users, Target, Heart, Sparkles, FileText, Presentation, Copy, Check } from "lucide-react";
+import { useRef, useCallback, useState } from "react";
 import * as htmlToImage from "html-to-image";
 import jsPDF from "jspdf";
 import pptxgen from "pptxgenjs";

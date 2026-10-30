@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Upload, Image as ImageIcon, X, Loader2, Mic, MicOff } from "lucide-react";
+import { Upload, X, Loader2, Mic, MicOff } from "lucide-react";
 import clsx from "clsx";
 
 interface UploadBoxProps {
@@ -19,6 +19,14 @@ export function UploadBox({ onImageSelect, isLoading, onError }: UploadBoxProps)
   const inputRef = useRef<HTMLInputElement>(null);
 
   const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const startListening = () => {
     if (isListening && recognitionRef.current) {
@@ -48,17 +56,14 @@ export function UploadBox({ onImageSelect, isLoading, onError }: UploadBoxProps)
       console.error("Speech recognition error:", event.error);
       setIsListening(false);
       if (event.error === 'not-allowed') {
-        alert("Akses mikrofon ditolak. Mohon izinkan mikrofon di pengaturan browser Anda.");
-      } else if (event.error === 'no-speech') {
-        // Abaikan atau beri tahu user secara halus
-        console.warn("Ajo nggak denger apa-apa nih, coba ngomong lagi ya!");
+        alert("Izin mikrofon ditolak. Izinkan mikrofon di pengaturan browser Anda.");
       }
     };
 
     recognition.onresult = (event: any) => {
       const transcript = Array.from(event.results)
         .map((result: any) => result[0])
-        .map((result) => result.transcript)
+        .map((result: any) => result.transcript)
         .join('');
       
       setBrandName(transcript);
@@ -99,16 +104,20 @@ export function UploadBox({ onImageSelect, isLoading, onError }: UploadBoxProps)
   };
 
   const handleFile = (file: File) => {
-    const validTypes = ["image/jpeg", "image/png", "image/webp"];
+    const validTypes = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"];
     if (!validTypes.includes(file.type)) {
-      if (onError) onError("Harap unggah gambar dengan format JPG, PNG, atau WEBP.");
+      if (onError) onError("Harap unggah gambar dengan format JPG, PNG, WEBP, atau HEIC.");
       return;
     }
 
-    const maxSize = 4 * 1024 * 1024; // 4MB
+    const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
-      if (onError) onError("Ukuran gambar terlalu besar. Maksimal 4MB.");
+      if (onError) onError("Ukuran gambar terlalu besar. Maksimal 10MB.");
       return;
+    }
+
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
     }
 
     const url = URL.createObjectURL(file);
@@ -117,6 +126,9 @@ export function UploadBox({ onImageSelect, isLoading, onError }: UploadBoxProps)
   };
 
   const clearImage = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+    }
     setPreviewUrl(null);
     if (inputRef.current) {
       inputRef.current.value = "";
@@ -221,7 +233,7 @@ export function UploadBox({ onImageSelect, isLoading, onError }: UploadBoxProps)
               Unggah Gambar Anda
             </h3>
             <p className="text-muted-foreground mb-6 max-w-sm">
-              Tarik dan lepas gambar produk, bisnis, atau diri Anda.
+              Tarik dan lepas gambar produk, bisnis, atau diri Anda (Maks 10MB: JPG, PNG, WEBP).
             </p>
             <button className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:scale-105 transition-transform duration-300 shadow-md hover:shadow-lg">
               Pilih File

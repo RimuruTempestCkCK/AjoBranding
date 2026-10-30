@@ -27,6 +27,13 @@ export default function Home() {
     }
   }, []);
 
+  const resetImage = () => {
+    setImageUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+  };
+
   const saveToHistory = (newResult: BrandIdentityResult) => {
     const newItem: HistoryItem = {
       ...newResult,
@@ -39,8 +46,8 @@ export default function Home() {
   };
 
   const handleSelectHistory = (item: HistoryItem) => {
+    resetImage();
     setResult(item);
-    setImageUrl(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -53,7 +60,11 @@ export default function Home() {
     setIsGenerating(true);
     setError(null);
     setResult(null);
-    setImageUrl(URL.createObjectURL(file));
+
+    // Revoke previous URL to prevent memory leaks
+    resetImage();
+    const newUrl = URL.createObjectURL(file);
+    setImageUrl(newUrl);
 
     try {
       const formData = new FormData();
@@ -83,7 +94,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center pb-24 selection:bg-white/20">
+    <div className="flex min-h-screen flex-col items-center pb-24 selection:bg-white/20">
       <Hero />
 
       <div className="w-full max-w-[1440px] mx-auto px-4 md:px-8 mt-0 flex flex-col items-center gap-16">
@@ -115,10 +126,14 @@ export default function Home() {
               transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
               className="w-full"
             >
-              <ResultCard result={result} imageUrl={imageUrl} onReset={() => {
-                setResult(null);
-                setImageUrl(null);
-              }} />
+              <ResultCard 
+                result={result} 
+                imageUrl={imageUrl} 
+                onReset={() => {
+                  setResult(null);
+                  resetImage();
+                }} 
+              />
               <ChatPanel brandContext={result} />
             </motion.div>
           )}
@@ -132,6 +147,6 @@ export default function Home() {
           />
         )}
       </div>
-    </main>
+    </div>
   );
 }

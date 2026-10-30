@@ -10,7 +10,7 @@ export function Hero() {
       <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center">
 
         {/* Centered Top Badge */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
@@ -20,7 +20,7 @@ export function Hero() {
           <span className="text-sm text-primary font-bold tracking-wider uppercase">
             AjoBranding Siap Bantu! 🚀
           </span>
-        </motion.div>
+        </motion.div> */}
 
         {/* Middle row: Text on Left, Image on Right */}
         <div className="w-full flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
